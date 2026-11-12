@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block title %}Destinations{% endblock %}
+
+{% block content %}
+    <h1>Destinations</h1>
+    <p>Choose a destination to see its available tour packages.</p>
+
+    <section class="card-grid">
+        {% for destination in destinations %}
+            <article class="card">
+                <p class="eyebrow">{{ destination.country }}</p>
+                <h2>{{ destination.name }}</h2>
+                <p>{{ destination.description }}</p>
+                <p>{{ destination.package_count }} packages available</p>
+                <a
+                    class="button"
+                    href="{{ url_for('home', destination_id=destination.id) }}"
+                >
+                    View packages
+                </a>
+            </article>
+        {% else %}
+            <p>No destinations have been added yet.</p>
+        {% endfor %}
+    </section>
+{% endblock %}

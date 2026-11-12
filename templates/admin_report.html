@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Booking report{% endblock %}
+
+{% block content %}
+    <h1>Booking report</h1>
+    <p>
+        Booking value is calculated from package prices.
+        No payments are processed by this prototype.
+    </p>
+
+    <section class="card-grid">
+        <article class="card">
+            <h2>Total bookings</h2>
+            <p>{{ summary.total_bookings }}</p>
+        </article>
+
+        <article class="card">
+            <h2>Confirmed</h2>
+            <p>{{ summary.confirmed_bookings }}</p>
+        </article>
+
+        <article class="card">
+            <h2>Cancelled</h2>
+            <p>{{ summary.cancelled_bookings }}</p>
+        </article>
+
+        <article class="card">
+            <h2>Confirmed booking value (simulated)</h2>
+            <p>₹{{ summary.confirmed_booking_value }}</p>
+        </article>
+    </section>
+
+    <section class="admin-section">
+        <h2>Report by package</h2>
+
+        {% for package in package_report %}
+            <article class="card">
+                <h3>{{ package.title }}</h3>
+                <p>Destination: {{ package.destination }}</p>
+                <p>Bookings: {{ package.booking_count }}</p>
+                <p>Confirmed seats: {{ package.confirmed_seats }}</p>
+                <p>Confirmed booking value: ₹{{ package.booking_value }}</p>
+            </article>
+        {% else %}
+            <p>No packages are available for the report yet.</p>
+        {% endfor %}
+    </section>
+
+    <p><a href="{{ url_for('admin_dashboard') }}">← Back to admin panel</a></p>
+{% endblock %}

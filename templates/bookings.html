@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}My bookings{% endblock %}
+
+{% block content %}
+    <h1>My bookings</h1>
+
+    {% for booking in bookings %}
+        <article class="card">
+            <p class="eyebrow">{{ booking.destination }}</p>
+            <h2>{{ booking.title }}</h2>
+            <p>Travelers: {{ booking.seats }}</p>
+            <p>Total price: ₹{{ booking.total_price }}</p>
+            <p>Status: {{ booking.status }}</p>
+            <p>Booked on: {{ booking.created_at }}</p>
+        </article>
+    {% else %}
+        <p>You don’t have any bookings yet.</p>
+        <a class="button" href="{{ url_for('home') }}">Browse packages</a>
+    {% endfor %}
+{% endblock %}

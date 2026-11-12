@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Admin panel{% endblock %}
+
+{% block content %}
+    <h1>Admin panel</h1>
+
+    <p>
+        <a class="button" href="{{ url_for('admin_report') }}">
+        View booking report
+        </a>
+   </p>
+
+    <section class="card-grid">
+        <article class="card">
+            <h2>Destinations</h2>
+            <p>{{ stats.destination_count }}</p>
+        </article>
+        <article class="card">
+            <h2>Active packages</h2>
+            <p>{{ stats.active_package_count }}</p>
+        </article>
+        <article class="card">
+            <h2>Bookings</h2>
+            <p>{{ stats.booking_count }}</p>
+        </article>
+    </section>
+
+    <section class="admin-section">
+        <h2>Add a destination</h2>
+        <form class="account-form" method="post"
+              action="{{ url_for('add_destination') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label>
+                Destination name
+                <input name="name" maxlength="100" required>
+            </label>
+
+            <label>
+                Country
+                <input name="country" maxlength="80" required>
+            </label>
+
+            <label>
+                Description
+                <textarea name="description" rows="3"></textarea>
+            </label>
+
+            <button type="submit">Add destination</button>
+        </form>
+    </section>
+
+    <section class="admin-section">
+        <h2>Add a tour package</h2>
+
+        {% if destinations %}
+            <form class="account-form" method="post"
+                  action="{{ url_for('add_package') }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <label>
+                    Destination
+                    <select name="destination_id" required>
+                        <option value="">Choose a destination</option>
+                        {% for destination in destinations %}
+                            <option value="{{ destination.id }}">
+                                {{ destination.name }}, {{ destination.country }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+
+                <label>
+                    Package title
+                    <input name="title" maxlength="150" required>
+                </label>
+
+                <label>
+                    Duration in days
+                    <input name="duration_days" type="number" min="1" required>
+                </label>
+
+                <label>
+                    Price per person
+                    <input name="price" type="number" min="0.01"
+                           step="0.01" required>
+                </label>
+
+                <label>
+                    Available seats
+                    <input name="available_seats" type="number" min="1" required>
+                </label>
+
+                <button type="submit">Add package</button>
+            </form>
+        {% else %}
+            <p>Add a destination before creating a package.</p>
+        {% endif %}
+    </section>
+
+    <section class="admin-section">
+        <h2>Current destinations</h2>
+        <ul>
+            {% for destination in destinations %}
+                <li>{{ destination.name }}, {{ destination.country }}</li>
+            {% else %}
+                <li>No destinations have been added.</li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="admin-section">
+        <h2>Tour packages</h2>
+
+        {% for package in packages %}
+            <article class="card">
+                <h3>{{ package.title }}</h3>
+                <p>{{ package.destination }} · {{ package.duration_days }} days</p>
+                <p>₹{{ package.price }} · {{ package.available_seats }} seats</p>
+                <p>
+                    Status:
+                    {% if package.is_active %}Active{% else %}Inactive{% endif %}
+                </p>
+
+                {% if package.is_active %}
+                    <form method="post"
+                          action="{{ url_for('deactivate_package',
+                                             package_id=package.id) }}">
+                        <input type="hidden" name="csrf_token"
+                               value="{{ csrf_token() }}">
+                        <button type="submit" class="secondary">
+                            Deactivate package
+                        </button>
+                    </form>
+                {% endif %}
+            </article>
+        {% else %}
+            <p>No packages have been added.</p>
+        {% endfor %}
+    </section>
+{% endblock %}

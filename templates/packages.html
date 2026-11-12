@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Tour Packages{% endblock %}
+
+{% block content %}
+    <h1>Tour Packages</h1>
+    <p>Search available trips or filter by destination.</p>
+
+    <form class="filter-form" method="get" action="{{ url_for('home') }}">
+        <label>
+            Search
+            <input
+                type="search"
+                name="q"
+                value="{{ search_text }}"
+                placeholder="Package or destination"
+            >
+        </label>
+
+        <label>
+            Destination
+            <select name="destination_id">
+                <option value="">All destinations</option>
+                {% for destination in destinations %}
+                    <option
+                        value="{{ destination.id }}"
+                        {% if selected_destination_id == destination.id %}selected{% endif %}
+                    >
+                        {{ destination.name }}
+                    </option>
+                {% endfor %}
+            </select>
+        </label>
+
+        <button type="submit">Find packages</button>
+        <a class="button secondary" href="{{ url_for('home') }}">Clear</a>
+    </form>
+
+    <section class="card-grid">
+        {% for package in packages %}
+            <article class="card">
+                <p class="eyebrow">{{ package.destination }}</p>
+                <h2>{{ package.title }}</h2>
+                <p>{{ package.duration_days }} days</p>
+                <p>₹{{ package.price }} per person</p>
+                <p>{{ package.available_seats }} seats available</p>
+                <a class="button" href="{{ url_for('package_detail', package_id=package.id) }}">
+                    View details
+                </a>
+            </article>
+        {% else %}
+            <p>No matching packages found. Try another search.</p>
+        {% endfor %}
+    </section>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}{{ package.title }}{% endblock %}
+
+{% block content %}
+    <p><a href="{{ url_for('home') }}">← Back to packages</a></p>
+
+    <article class="detail-card">
+        <p class="eyebrow">{{ package.destination }}, {{ package.country }}</p>
+        <h1>{{ package.title }}</h1>
+        <p>{{ package.destination_description }}</p>
+
+        <dl>
+            <dt>Duration</dt>
+            <dd>{{ package.duration_days }} days</dd>
+
+            <dt>Price per person</dt>
+            <dd>₹{{ package.price }}</dd>
+
+            <dt>Seats available</dt>
+            <dd>{{ package.available_seats }}</dd>
+        </dl>
+
+{% if session.get("user_id") %}
+    {% if package.available_seats > 0 %}
+        <form
+            class="account-form"
+            method="post"
+            action="{{ url_for('book_package', package_id=package.id)
+}}"
+        >
+            <input
+                type="hidden"
+                name="csrf_token"
+                value="{{ csrf_token() }}"
+            >
+
+            <label>
+                Number of travelers
+                <input
+                    type="number"
+                    name="seats"
+                    min="1"
+                    max="{{ package.available_seats }}"
+                    value="1"
+                    required
+                >
+            </label>
+
+            <button type="submit">Book now</button>
+        </form>
+    {% else %}
+        <p>This package is fully booked.</p>
+    {% endif %}
+{% else %}
+    <p>
+        Please <a href="{{ url_for('login') }}">log in</a> to book this package.
+    </p>
+{% endif %}
+    </article>
+{% endblock %}
