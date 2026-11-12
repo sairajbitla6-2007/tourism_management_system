@@ -36,6 +36,19 @@
             >
 
             <label>
+                Trip start date
+                <input
+                    type="date"
+                    name="trip_date"
+                    min="{{ minimum_trip_date }}"
+                    required
+                >
+                <output id="trip-date-weekday" aria-live="polite">
+                    Choose a date to see the weekday.
+                </output>
+            </label>
+
+            <label>
                 Number of travelers
                 <input
                     type="number"
@@ -49,6 +62,26 @@
 
             <button type="submit">Book now</button>
         </form>
+        <script>
+            (() => {
+                const dateInput = document.querySelector('[name="trip_date"]');
+                const weekdayOutput = document.getElementById("trip-date-weekday");
+                const updateWeekday = () => {
+                    if (!dateInput.value) {
+                        weekdayOutput.textContent = "Choose a date to see the weekday.";
+                        return;
+                    }
+                    const [year, month, day] = dateInput.value.split("-").map(Number);
+                    const selectedDate = new Date(Date.UTC(year, month - 1, day));
+                    weekdayOutput.textContent = new Intl.DateTimeFormat(undefined, {
+                        weekday: "long",
+                        timeZone: "UTC"
+                    }).format(selectedDate);
+                };
+                dateInput.addEventListener("input", updateWeekday);
+                updateWeekday();
+            })();
+        </script>
     {% else %}
         <p>This package is fully booked.</p>
     {% endif %}

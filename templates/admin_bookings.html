@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Manage bookings{% endblock %}
+
+{% block content %}
+    <h1>Manage bookings</h1>
+    <p>Only confirmed bookings can be changed. Each change requires a reason and is recorded in the booking history.</p>
+    <p>Customers can see the latest admin update on My bookings; this prototype does not send email notifications.</p>
+
+    {% for booking in bookings %}
+        <article class="card admin-booking-card">
+            <p class="eyebrow">Booking #{{ booking.id }} · {{ booking.status|title }}</p>
+            <h2>{{ booking.package_title }}</h2>
+            <p>{{ booking.destination }} · Customer: {{ booking.customer_name }}</p>
+            <p>Travelers: {{ booking.seats }} · Total price: ₹{{ booking.total_price }}</p>
+            <p>Trip starts: {% if booking.trip_date %}{{ booking.trip_date.strftime("%A, %d %b %Y") }}{% else %}Not specified{% endif %}</p>
+            <p>Booked on: {{ booking.created_at }}</p>
+
+            {% if booking.status == "confirmed" %}
+                <div class="admin-booking-actions">
+                    <form class="account-form" method="post"
+                          action="{{ url_for('admin_postpone_booking', booking_id=booking.id) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <h3>Postpone trip</h3>
+                        <label>
+                            New trip date
+                            <input type="date" name="trip_date"
+                                   min="{{ booking.minimum_postpone_date }}" required>
+                        </label>
+                        <label>
+                            Reason for postponement
+                            <textarea name="reason" rows="3" maxlength="500" required></textarea>
+                        </label>
+                        <button type="submit">Save new trip date</button>
+                    </form>
+
+                    <form class="account-form" method="post"
+                          action="{{ url_for('admin_cancel_booking', booking_id=booking.id) }}"
+                          onsubmit="return confirm('Cancel this booking and return its seats to the package?')">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <h3>Cancel booking</h3>
+                        <label>
+                            Reason for cancellation
+                            <textarea name="reason" rows="3" maxlength="500" required></textarea>
+                        </label>
+                        <button type="submit" class="danger">Cancel booking</button>
+                    </form>
+                </div>
+            {% endif %}
+
+            {% if booking.admin_actions %}
+                <details class="admin-action-history">
+                    <summary>Admin change history ({{ booking.admin_actions|length }})</summary>
+                    <ul>
+                        {% for action in booking.admin_actions %}
+                            <li>
+                                <strong>{{ action.action_type|title }}</strong> by {{ action.admin_name }} on {{ action.created_at }}.
+                                {% if action.previous_trip_date %}
+                                    From {{ action.previous_trip_date.strftime("%d %b %Y") }}
+                                {% else %}
+                                    Previous date not specified
+                                {% endif %}
+                                {% if action.action_type == "postponed" and action.new_trip_date %}
+                                    to {{ action.new_trip_date.strftime("%d %b %Y") }}
+                                {% endif %}.
+                                Reason: {{ action.reason }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </details>
+            {% endif %}
+        </article>
+    {% else %}
+        <p>There are no bookings to manage yet.</p>
+    {% endfor %}
+
+    <p><a href="{{ url_for('admin_dashboard') }}">← Back to admin panel</a></p>
+{% endblock %}

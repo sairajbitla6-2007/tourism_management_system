@@ -10,9 +10,23 @@
             <p class="eyebrow">{{ booking.destination }}</p>
             <h2>{{ booking.title }}</h2>
             <p>Travelers: {{ booking.seats }}</p>
+            <p>Trip starts: {% if booking.trip_date %}{{ booking.trip_date.strftime("%A, %d %b %Y") }}{% else %}Not specified (older booking){% endif %}</p>
+            {% if booking.latest_admin_reason %}
+                <p class="notice">
+                    Admin update ({{ booking.latest_admin_action|title }}):
+                    {{ booking.latest_admin_reason }}
+                </p>
+            {% endif %}
             <p>Total price: ₹{{ booking.total_price }}</p>
             <p>Status: {{ booking.status }}</p>
             <p>Booked on: {{ booking.created_at }}</p>
+            {% if booking.status == "confirmed" %}
+                <form method="post"
+                      action="{{ url_for('cancel_booking', booking_id=booking.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="danger">Cancel booking</button>
+                </form>
+            {% endif %}
         </article>
     {% else %}
         <p>You don’t have any bookings yet.</p>

@@ -9,26 +9,30 @@
         No payments are processed by this prototype.
     </p>
 
-    <section class="card-grid">
-        <article class="card">
+    <section class="card-grid" aria-label="Booking report summaries">
+        <a class="card report-card-link" href="{{ url_for('admin_report_bookings', category='all') }}" target="_blank" rel="noopener noreferrer">
             <h2>Total bookings</h2>
             <p>{{ summary.total_bookings }}</p>
-        </article>
+            <span>Open booking details ↗</span>
+        </a>
 
-        <article class="card">
+        <a class="card report-card-link" href="{{ url_for('admin_report_bookings', category='confirmed') }}" target="_blank" rel="noopener noreferrer">
             <h2>Confirmed</h2>
             <p>{{ summary.confirmed_bookings }}</p>
-        </article>
+            <span>Open booking details ↗</span>
+        </a>
 
-        <article class="card">
+        <a class="card report-card-link" href="{{ url_for('admin_report_bookings', category='cancelled') }}" target="_blank" rel="noopener noreferrer">
             <h2>Cancelled</h2>
             <p>{{ summary.cancelled_bookings }}</p>
-        </article>
+            <span>Open booking details ↗</span>
+        </a>
 
-        <article class="card">
+        <a class="card report-card-link" href="{{ url_for('admin_report_bookings', category='value') }}" target="_blank" rel="noopener noreferrer">
             <h2>Confirmed booking value (simulated)</h2>
             <p>₹{{ summary.confirmed_booking_value }}</p>
-        </article>
+            <span>Open included bookings ↗</span>
+        </a>
     </section>
 
     <section class="admin-section">

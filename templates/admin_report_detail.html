@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ title }}</h1>
+    <p>This is a read-only report of booking records.</p>
+
+    {% if bookings %}
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking</th>
+                        <th>Customer</th>
+                        <th>Package</th>
+                        <th>Destination</th>
+                        <th>Travelers</th>
+                        <th>Trip starts</th>
+                        <th>Total price</th>
+                        <th>Status</th>
+                        <th>Booked on</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>#{{ booking.id }}</td>
+                            <td>{{ booking.customer_name }}</td>
+                            <td>{{ booking.package_title }}</td>
+                            <td>{{ booking.destination }}</td>
+                            <td>{{ booking.seats }}</td>
+                            <td>{% if booking.trip_date %}{{ booking.trip_date.strftime("%A, %d %b %Y") }}{% else %}Not specified{% endif %}</td>
+                            <td>₹{{ booking.total_price }}</td>
+                            <td>{{ booking.status|title }}</td>
+                            <td>{{ booking.created_at }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <p>No bookings match this report.</p>
+    {% endif %}
+
+    <p><a href="{{ url_for('admin_report') }}">← Back to booking report</a></p>
+{% endblock %}

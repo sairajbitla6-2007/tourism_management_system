@@ -12,18 +12,21 @@
    </p>
 
     <section class="card-grid">
-        <article class="card">
+        <a class="card report-card-link" href="{{ url_for('destinations_page') }}">
             <h2>Destinations</h2>
             <p>{{ stats.destination_count }}</p>
-        </article>
-        <article class="card">
+            <span>View destinations →</span>
+        </a>
+        <a class="card report-card-link" href="#tour-packages">
             <h2>Active packages</h2>
             <p>{{ stats.active_package_count }}</p>
-        </article>
-        <article class="card">
+            <span>View active packages ↓</span>
+        </a>
+        <a class="card report-card-link" href="{{ url_for('admin_bookings') }}" target="_blank" rel="noopener noreferrer">
             <h2>Bookings</h2>
             <p>{{ stats.booking_count }}</p>
-        </article>
+            <span>View and manage bookings ↗</span>
+        </a>
     </section>
 
     <section class="admin-section">
@@ -110,33 +113,36 @@
         </ul>
     </section>
 
-    <section class="admin-section">
+    <section class="admin-section" id="tour-packages">
         <h2>Tour packages</h2>
-
-        {% for package in packages %}
+        {% for package in packages if package.is_active %}
             <article class="card">
                 <h3>{{ package.title }}</h3>
                 <p>{{ package.destination }} · {{ package.duration_days }} days</p>
                 <p>₹{{ package.price }} · {{ package.available_seats }} seats</p>
-                <p>
-                    Status:
-                    {% if package.is_active %}Active{% else %}Inactive{% endif %}
-                </p>
-
-                {% if package.is_active %}
-                    <form method="post"
-                          action="{{ url_for('deactivate_package',
-                                             package_id=package.id) }}">
-                        <input type="hidden" name="csrf_token"
-                               value="{{ csrf_token() }}">
-                        <button type="submit" class="secondary">
-                            Deactivate package
-                        </button>
-                    </form>
-                {% endif %}
+                <p>Status: Active</p>
+                <form method="post"
+                      action="{{ url_for('deactivate_package', package_id=package.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="secondary">Deactivate package</button>
+                </form>
             </article>
         {% else %}
-            <p>No packages have been added.</p>
+            <p>No active packages are available.</p>
+        {% endfor %}
+    </section>
+
+    <section class="admin-section" id="inactive-packages">
+        <h2>Inactive packages</h2>
+        {% for package in packages if not package.is_active %}
+            <article class="card">
+                <h3>{{ package.title }}</h3>
+                <p>{{ package.destination }} · {{ package.duration_days }} days</p>
+                <p>₹{{ package.price }} · {{ package.available_seats }} seats</p>
+                <p>Status: Inactive</p>
+            </article>
+        {% else %}
+            <p>No inactive packages.</p>
         {% endfor %}
     </section>
 {% endblock %}
