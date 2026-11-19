@@ -201,3 +201,31 @@ th {
     cursor: pointer;
     font-weight: bold;
 }
+
+
+.password-input-row {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.password-input-row input {
+    flex: 1;
+    min-width: 0;
+}
+
+.password-toggle {
+    flex: 0 0 auto;
+    min-width: 78px;
+    padding-inline: 14px;
+}
+
+.password-toggle:focus-visible {
+    outline: 3px solid #123b52;
+    outline-offset: 3px;
+}
+
+.password-field {
+    display: grid;
+    gap: 6px;
+}

@@ -13,10 +13,26 @@
             <input name="email" type="email" required autocomplete="email">
         </label>
 
-        <label>
-            Password
-            <input name="password" type="password" required autocomplete="current-password">
-        </label>
+        <div class="password-field">
+            <label for="login-password">Password</label>
+            <div class="password-input-row">
+                <input
+                    id="login-password"
+                    name="password"
+                    type="password"
+                    required
+                    autocomplete="current-password"
+                >
+                <button
+                    class="password-toggle secondary"
+                    type="button"
+                    data-password-toggle
+                    aria-controls="login-password"
+                    aria-label="Show password"
+                    aria-pressed="false"
+                >Show</button>
+            </div>
+        </div>
 
         <button type="submit">Log in</button>
     </form>

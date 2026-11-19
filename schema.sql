@@ -89,3 +89,23 @@ VALUES
 (1, 'Jaipur Heritage Tour', 3, 8500.00, 12),
 (2, 'Kochi Coastal Escape', 4, 12000.00, 8),
 (3, 'Agra Weekend Visit', 2, 6500.00, 15);
+
+-- Additional destinations and packages for the expanded catalogue.
+INSERT INTO destinations (name, country, description) VALUES
+('Munnar', 'India', 'Tea gardens, misty hills, and cool mountain scenery'),
+('Varanasi', 'India', 'Historic riverfront, temples, and cultural heritage'),
+('Udaipur', 'India', 'Lakeside palaces and the heritage of Rajasthan'),
+('Rishikesh', 'India', 'Himalayan foothills, river views, and yoga retreats'),
+('Darjeeling', 'India', 'Tea estates and views of the eastern Himalayas');
+
+INSERT INTO tour_packages
+    (destination_id, title, duration_days, price, available_seats)
+SELECT d.id, p.title, p.duration_days, p.price, p.available_seats
+FROM destinations AS d
+JOIN (
+    SELECT 'Munnar' AS destination, 'Munnar Tea Garden Escape' AS title, 3 AS duration_days, 9500.00 AS price, 12 AS available_seats
+    UNION ALL SELECT 'Varanasi', 'Varanasi Heritage Visit', 2, 6500.00, 10
+    UNION ALL SELECT 'Udaipur', 'Udaipur Lakes and Palaces', 3, 11000.00, 8
+    UNION ALL SELECT 'Rishikesh', 'Rishikesh River and Hills Retreat', 3, 7800.00, 10
+    UNION ALL SELECT 'Darjeeling', 'Darjeeling Himalayan Views', 4, 14500.00, 10
+) AS p ON p.destination = d.name AND d.country = 'India';
